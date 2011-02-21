@@ -103,7 +103,7 @@ sub quick_select {
 
 sub _quick_query {
     my ($self, $type, $table_name, $data, $where) = @_;
-    
+
     if ($type !~ m{^ (SELECT|INSERT|UPDATE|DELETE) $}x) {
         carp "Unrecognised query type $type!";
         return;
@@ -113,7 +113,7 @@ sub _quick_query {
         return;
     }
     if (($type eq 'INSERT' || $type eq 'UPDATE')
-        && (!$data || ref $data ne 'HASH')) 
+        && (!$data || ref $data ne 'HASH'))
     {
         carp "Expected a hashref of changes";
         return;
@@ -144,13 +144,13 @@ sub _quick_query {
         $sql .= join ',', map { $self->quote_identifier($_) .'=?' } keys %$data;
         push @bind_params, values %$data;
     }
-    
+
     if ($type eq 'UPDATE' || $type eq 'DELETE' || $type eq 'SELECT') {
         $sql .= " WHERE " . join " AND ",
             map { $self->quote_identifier($_) . '=?' } keys %$where;
         push @bind_params, values %$where;
     }
-    
+
     # If it's a select query and we're called in scalar context, we'll only
     # return one row, so add a LIMIT 1
     if ($type eq 'SELECT' && !wantarray) {
@@ -165,7 +165,7 @@ sub _quick_query {
     # context, they return a list of matching rows.
     if ($type eq 'SELECT') {
         if (wantarray) {
-            return @{ 
+            return @{
                 $self->selectall_arrayref(
                     $sql, { Slice => {} }, @bind_params
                 )
